@@ -1,0 +1,50 @@
+<section class="spin-game">
+  <header class="spin-header">
+    <img src="assets/logo.png" alt="Logo" class="spin-logo" />
+    <h1>Bugün Ne Kadar Şanslısın?</h1>
+    <h2>Kısmetin hangi oyundan yana, hemen başla!</h2>
+  </header>
+
+  <!-- CONTENEDOR EXTERNO -->
+  <div class="outer-container">
+    
+    <!-- CONTENEDOR INTERNO (solo las cards) -->
+    <div class="cards-wrapper">
+        <div class="spin-line"></div>
+        
+<div class="cards-track"
+     [ngClass]="animationState"
+     [style.transform]="'translateX(' + trackTranslateX + 'px)'">
+  <div *ngFor="let game of allGames" class="card">
+    <img [src]="game.imageUrl" [alt]="game.name" />
+  </div>
+</div>
+
+      <!-- Botón + línea -->
+      <div class="spin-button-wrapper">
+        <img 
+          src="assets/spin-button.png" 
+          alt="Spin Button" 
+          class="spin-button-img"
+          (click)="spin()" 
+          [class.disabled]="isSpinning"
+        />
+        
+      </div>
+    </div>
+
+    <!-- POPUP DEL GANADOR (aparece tras spin) -->
+    <div class="winner-popup" *ngIf="winner">
+      <div class="winner-left">
+        <img [src]="winner.imageUrl" [alt]="winner.name" class="winner-img" />
+      </div>
+      <div class="winner-right">
+        <h3 class="winner-title">{{ winner.name | uppercase }}</h3>
+        <p class="winner-text">{{ winner.text }}</p>
+        <button class="btn-yellow">Oyna</button>
+        <button class="btn-white">Tekrar dene</button>
+      </div>
+    </div>
+
+  </div>
+</section>

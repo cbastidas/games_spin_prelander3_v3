@@ -1,0 +1,10 @@
+# Dependencies
+/node_modules
+/dist
+
+# Logs
+npm-debug.log
+yarn-error.log
+
+# Compilation artifacts
+/tmp

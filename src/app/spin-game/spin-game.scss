@@ -1,0 +1,242 @@
+.spin-game {
+  min-height: 100vh;
+  background: url('/assets/background.png') no-repeat center center fixed;
+  background-size: cover;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.spin-header {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  .spin-logo {
+    width: 180px;
+    margin-bottom: 1rem;
+    padding-top: 2rem;
+  }
+
+  h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin: 0.5rem 0;
+  }
+
+  h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #65AC42; 
+    margin: 0;
+  }
+}
+
+
+/* Contenedor externo */
+.outer-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 1rem auto;
+  padding: 1.5rem;
+  background-color: #0d2f0d;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Contenedor interno solo para las cards */
+.cards-wrapper {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 1010px; /* espacio para 6 cards */
+  height: 240px;
+  margin: 0 auto 1.5rem auto;
+  background-color: #143d14; /* verde más oscuro */
+  border-radius: 12px;
+  padding: auto;
+}
+
+/* Cards */
+.cards-track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  transition: transform 2s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+.card {
+  flex: 0 0 auto;
+  width: 160px;
+  height: 210px;
+  border: 2px solid #65AC42;
+  border-radius: 17px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+
+  .card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+  }
+}
+
+.spin-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 3px;
+    background-color: #65AC42;
+    transform: translateX(-50%);
+    z-index: 5;
+  }
+
+/* Botón Spin + línea */
+.spin-button-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+
+  .spin-button-img {
+    width: 120px;
+    cursor: pointer;
+  }
+
+  .disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+/* Popup ganador */
+.winner-popup {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  width: 100%;
+  max-width: 1020px;
+  padding: 1rem;
+  background-color: #143d14;
+  border-radius: 12px;
+
+  .winner-left {
+    flex: 0 0 auto;
+
+    .winner-img {
+      width: 120px;
+      height: auto;
+      border-radius: 8px;
+      background-color: #65AC42;
+    }
+  }
+
+  .winner-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .winner-title {
+      color: #65AC42;
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+
+    .winner-text {
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+
+    .btn-yellow {
+      background-color: #FED34D;
+      color: #012C01;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+    }
+
+    .btn-white {
+      background-color: #FFFFFF;
+      color: #012C01;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  }
+}
+
+@keyframes slowRotate {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-1800px); }
+}
+@keyframes fastRotate {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-1800px); }
+}
+@keyframes stopRotate {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-1800px); }
+}
+
+@keyframes scrollLoop {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-50% - 8px));  /* solo la mitad porque duplicamos */
+  }
+}
+.rotating { animation: scrollLoop 5s linear infinite; }
+.rotating-slow { animation: scrollLoop 20s linear infinite; }
+.rotating-fast { animation: fastRotate 0.5s linear infinite; }
+.rotating-stop { animation: transform 2s cubic-bezier(0.1, 0.9, 0.2, 1) }
+
+.winner { border: 3px solid gold; box-shadow: 0 0 15px gold; }
+
+@media (max-width: 480px) {
+  .cards-track {
+    justify-content: center;
+    transform: translateX(-365px) !important;
+    margin: 0 auto;
+  }
+
+  .cards-wrapper {
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .card {
+    flex: 0 0 auto;
+    width: 120px; // Ajusta según el tamaño de tus cards
+    margin: 0 5px;
+  }
+
+  .spin-line {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+
