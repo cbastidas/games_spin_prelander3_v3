@@ -76,6 +76,7 @@ export class SpinGame {
   gap = 16;
   intervalId: any;
   pendingWinner: any = null;
+  lastWinnerIndex: number = -1;
 
   startScroll() {
   const animate = () => {
@@ -117,69 +118,132 @@ stopScroll() {
   }
 }
 
+private getCardWidth(): number {
+    if (window.innerWidth <= 280) {
+      return 80; // ancho de card en mobile según tu CSS
+    }
+    return 160; // ancho de card en desktop
+  }
 
-  spin() {
+  private getGap(): number {
+    if (window.innerWidth <= 280) {
+      return 16; // gap reducido en mobile (por el margin: 0 5px)
+    }
+    return 16; // gap en desktop
+  }
+
+   private checkDimensionsChanged(): boolean {
+    const currentWidth = this.getCardWidth();
+    const currentGap = this.getGap();
+    return this.cardWidth !== currentWidth || this.gap !== currentGap;
+  }
+
+    ngOnInit(): void {
+      window.addEventListener('resize', this.recenterWinner);
+    }
+    recenterWinner = () => {
+      if (!this.winner) return;
+
+      const winnerIndex = this.allGames.findIndex(game => game.name === this.winner?.name);
+
+      const container = document.querySelector('.cards-wrapper') as HTMLElement;
+      const card = document.querySelector('.card') as HTMLElement;
+
+      if (container && card && winnerIndex !== -1) {
+        const containerWidth = container.offsetWidth;
+        const cardWidth = card.offsetWidth;
+      
+        const centerOffset = (containerWidth / 2) - (cardWidth / 2);
+      
+        this.trackTranslateX = -winnerIndex * cardWidth + centerOffset;
+      }
+    }
+
+    ngOnDestroy(): void {
+      window.removeEventListener('resize', this.recenterWinner);
+    }
+
+
+   spin() {
     if (this.isSpinning) return;
     this.isSpinning = true;
     this.winner = null;
 
     const winnerIndex = Math.floor(Math.random() * this.games.length);
-    //this.winner = this.games[winnerIndex];
+    this.lastWinnerIndex = winnerIndex; // Guardar el índice
+
+    // DEBUG: Imprimir información
+    console.log('=== DEBUG SPIN ===');
+    console.log('Winner Index:', winnerIndex);
+    console.log('Winner Game:', this.games[winnerIndex].name);
+    console.log('Card Width:', this.getCardWidth());
+    console.log('Gap:', this.getGap());
+    console.log('Window Width:', window.innerWidth);
+    console.log('Is Mobile:', window.innerWidth <= 480);
 
     this.animationState = 'rotating-fast';
 
-    const itemTotalWidth = this.cardWidth + this.gap; // 160 + 16 = 176
-    const targetPositionIndex = 3;
-    const offsetCardsInitial = winnerIndex - targetPositionIndex;
-    const targetTranslateInitial = -(offsetCardsInitial * itemTotalWidth) + (this.cardWidth / 2);
-    const visualOffset = 30; // Tu offset visual
-    this.trackTranslateX = targetTranslateInitial + visualOffset; 
+    // Actualizar las dimensiones almacenadas
+    this.cardWidth = this.getCardWidth();
+    this.gap = this.getGap();
+    
+    const itemTotalWidth = this.cardWidth + this.gap;
+    
+    // Obtener el ancho real del contenedor
+    const containerElement = document.querySelector('.cards-wrapper');
+    const container = document.querySelector('.cards-wrapper') as HTMLElement;
+    const card = document.querySelector('.card') as HTMLElement;    
+    //const containerWidth = containerElement ? containerElement.clientWidth : 1010;
+    const containerWidth = container.offsetWidth;
+    const cardWidth = card.offsetWidth;
+    const centerOffset = (containerWidth / 2) - (cardWidth / 2);
+    
+    // La línea verde está en el centro del contenedor
+    const linePosition = containerWidth / 2;
+    
+    // Calcular la posición donde debe quedar el centro de la carta ganadora
+    const targetCardCenter = (winnerIndex * itemTotalWidth) + (this.cardWidth / 2);
+    
+    // Ajuste adicional para mobile
+    //const mobileOffset = window.innerWidth <= 480 ? this.gap + 8 : 0;
+    
+    let targetTranslate = linePosition - targetCardCenter;
+    
+    this.trackTranslateX = -winnerIndex * cardWidth + centerOffset;
 
-    //const alignmentOffset = winnerIndex * itemTotalWidth;
-    //let targetTranslate = -(alignmentOffset - (targetPositionIndex * itemTotalWidth));
-    //targetTranslate -= (this.cardWidth / 2);
-
-//this.scrollSpeed = 12;
-//this.stopping = false;
-
-    // El ganador debe alinearse en el centro (posición 3, índice 3 = cuarta carta)
-//    const targetPosition = 3;
-//    const offsetCards = winnerIndex - targetPosition;
-//    const targetTranslate = -(offsetCards * (this.cardWidth + this.gap))
-//                        + (this.cardWidth / 2);
-
-    // Calcular cuántas cartas mover
-//    const offsetCards = winnerIndex - targetPosition;
-
-    // Movimiento en píxeles
-//    const targetTranslate = -(offsetCards * this.cardWidth);
-
-    // Añadir varias vueltas antes de detenerse
-//    const totalTranslate = targetTranslate - (this.cardWidth * this.games.length * 3);
-
-    // Aplicar animación
-//    const visualOffset = this.cardWidth / 2; // para que quede centrado visualmente
-//    this.trackTranslateX = targetTranslate - (this.cardWidth * this.games.length * 3) + visualOffset;
-//    this.startScroll();
-    // simulamos animación de spin
     setTimeout(() => {
-    this.animationState = 'rotating-stop';
-
-    //const targetPosition = 3; // la carta central
-    const offsetCards = winnerIndex - targetPositionIndex;
-    //const targetTranslate = -(offsetCards * (this.cardWidth + this.gap));
-    let finalStopTranslate = -(offsetCards * itemTotalWidth);
-    finalStopTranslate -= (this.cardWidth / 2); // 160 / 2 = -80px
-    this.trackTranslateX = finalStopTranslate;
+      this.animationState = 'rotating-stop';
+      
+      // Recalcular con las dimensiones actuales por si cambió el viewport
+      const currentCardWidth = this.getCardWidth();
+      const currentGap = this.getGap();
+      const currentItemWidth = currentCardWidth + currentGap;
+      const currentContainer = document.querySelector('.cards-wrapper');
+      const currentContainerWidth = currentContainer ? currentContainer.clientWidth : 1010;
+      const currentLinePosition = currentContainerWidth / 2;
+      //const currentMobileOffset = window.innerWidth <= 480 ? currentGap + 12 : 0;
+      
+      const finalCardCenter = (winnerIndex * currentItemWidth) + (currentCardWidth / 2);
+      let finalStopTranslate = currentLinePosition - finalCardCenter;
+      
+      this.trackTranslateX = finalStopTranslate;
 
       setTimeout(() => {
-      this.animationState = '';
-      this.isSpinning = false;
-      this.winner = this.games[winnerIndex];
-      // Aquí aparece el popup
-    }, 500); // duración de la desaceleración
-  }, 3000); // tiempo que gira rápido antes de desacelerar
-}    
+        this.animationState = '';
+        this.isSpinning = false;
+        console.log('=== FINAL POSITION ===');
+        console.log('Final Translate X:', this.trackTranslateX);
+        console.log('Winner shown:', this.games[winnerIndex].name);
+        this.winner = this.games[winnerIndex];
+        
+        // Actualizar dimensiones finales
+        this.cardWidth = currentCardWidth;
+        this.gap = currentGap;
+      }, 500);
+    }, 3000);
+  }      
+   
+
 
   getWinnerText(name: string): string {
   switch (name) {

@@ -213,29 +213,5 @@
 
 .winner { border: 3px solid gold; box-shadow: 0 0 15px gold; }
 
-@media (max-width: 480px) {
-  .cards-track {
-    justify-content: center;
-    margin: 0 auto;
-  }
-
-  .cards-wrapper {
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .card {
-    flex: 0 0 auto;
-    width: 120px; // Ajusta según el tamaño de tus cards
-    margin: 0 5px;
-  }
-
-  .spin-line {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-}
 
 
