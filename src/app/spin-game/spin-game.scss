@@ -116,7 +116,6 @@
   }
 
   .disabled {
-    opacity: 0.5;
     pointer-events: none;
   }
 }
@@ -140,7 +139,6 @@
       width: 120px;
       height: auto;
       border-radius: 8px;
-      background-color: #65AC42;
     }
   }
 
@@ -183,6 +181,18 @@
       cursor: pointer;
     }
   }
+
+  .btn-yellow,
+   a.btn-yellow {
+     text-decoration: none;
+   }
+
+   .btn-white,
+a.btn-white {
+  text-decoration: none;
+}
+
+
 }
 
 @keyframes slowRotate {
